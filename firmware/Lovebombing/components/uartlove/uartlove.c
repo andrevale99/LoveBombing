@@ -7,29 +7,7 @@ static int internaluartport = -1;
 esp_err_t uartlove_init(uartlove_config_t *config)
 {
     ESP_LOGI(TAG, "uartlove install...");
-    if (config)
-    {
-        ESP_LOGI(TAG, "custom install...");
-
-        internaluartport = config->uartport;
-
-        ESP_ERROR_CHECK(uart_driver_install(config->uartport, config->buffersize * 2,
-                                            0, 0, NULL, 0));
-        ESP_ERROR_CHECK(uart_param_config(config->uartport, &config->uartconfig));
-        ESP_ERROR_CHECK(uart_set_pin(config->uartport,
-                                     config->txpin, config->rxpin,
-                                     -1, -1));
-        ESP_LOGI("UART",
-                 "porta=%d tx=%d rx=%d baud=%ld buffer=%u",
-                 config->uartport,
-                 config->txpin,
-                 config->rxpin,
-                 config->uartconfig.baud_rate,
-                 config->buffersize);
-
-        ESP_LOGI(TAG, "custom install finished.");
-    }
-    else
+    if (!config)
     {
         ESP_LOGI(TAG, "default install...");
 
@@ -60,6 +38,28 @@ esp_err_t uartlove_init(uartlove_config_t *config)
                  UARTLOVE_BUFFER_SIZE_DEFAULT);
 
         ESP_LOGI(TAG, "default install finished.");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "custom install...");
+
+        internaluartport = config->uartport;
+
+        ESP_ERROR_CHECK(uart_driver_install(config->uartport, config->buffersize * 2,
+                                            0, 0, NULL, 0));
+        ESP_ERROR_CHECK(uart_param_config(config->uartport, &config->uartconfig));
+        ESP_ERROR_CHECK(uart_set_pin(config->uartport,
+                                     config->txpin, config->rxpin,
+                                     -1, -1));
+        ESP_LOGI("UART",
+                 "porta=%d tx=%d rx=%d baud=%ld buffer=%u",
+                 config->uartport,
+                 config->txpin,
+                 config->rxpin,
+                 config->uartconfig.baud_rate,
+                 config->buffersize);
+
+        ESP_LOGI(TAG, "custom install finished.");
     }
 
     return ESP_OK;
