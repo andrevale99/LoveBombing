@@ -5,7 +5,7 @@
 #include "freertos/task.h"
 
 #include "env.h"
-
+#include "letter.h"
 #include "uartlove.h"
 
 #include "esp_log.h"
@@ -13,55 +13,35 @@
 static const char *TAG = "uartlove_task";
 TaskHandle_t handle_uartlove = NULL;
 
-static void process_command(char *rx_buffer)
-{
-    char *cmd;
-    char *value;
-
-    /* Remove \r e \n */
-    rx_buffer[strcspn(rx_buffer, "\r\n")] = '\0';
-
-    cmd = strtok(rx_buffer, " ");
-    value = strtok(NULL, " ");
-
-    if ((cmd != NULL) && (value != NULL))
+static uartlove_config_t config =
     {
-        printf("Comando: %s\n", cmd);
-        printf("Valor: %s\n", value);
+        .uartconfig = {
+            .baud_rate = ENV_UART_BAUDRATE,
+            .data_bits = UART_DATA_8_BITS,
+            .parity = UART_PARITY_DISABLE,
+            .stop_bits = UART_STOP_BITS_1,
+            .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+            .source_clk = UART_SCLK_DEFAULT,
+        },
+        .uartport = ENV_UART_PORT,
+        .rxpin = ENV_UART_RX_GPIO,
+        .txpin = ENV_UART_TX_GPIO,
+        .buffersize = ENV_UART_BUFFER_SIZE,
+};
 
-        int number = atoi(value);
-        printf("Valor inteiro: %d\n", number);
-    }
-    else
-    {
-        printf("Formato invalido\n");
-    }
-}
 
+// ====================================================+
+// TASK
+// ====================================================+
 void task_uartlove(void *pvargs)
 {
     ESP_LOGI(TAG, "uartlove task started");
-
-    uartlove_config_t config =
-        {
-            .uartconfig = {
-                .baud_rate = ENV_UART_BAUDRATE,
-                .data_bits = UART_DATA_8_BITS,
-                .parity = UART_PARITY_DISABLE,
-                .stop_bits = UART_STOP_BITS_1,
-                .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-                .source_clk = UART_SCLK_DEFAULT,
-            },
-            .uartport = ENV_UART_PORT,
-            .rxpin = ENV_UART_RX_GPIO,
-            .txpin = ENV_UART_TX_GPIO,
-            .buffersize = ENV_UART_BUFFER_SIZE,
-        };
 
     uartlove_init(&config);
 
     // Configure a temporary buffer for the incoming data
     uint8_t *data = (uint8_t *)malloc(ENV_UART_BUFFER_SIZE);
+    letter_t letter_uart = {0};
 
     while (1)
     {
@@ -74,7 +54,7 @@ void task_uartlove(void *pvargs)
         {
             data[len] = '\0';
             // ESP_LOGI(TAG, "Recv str: %s", (char *)data);
-            process_command((char *)data);
+            letter_decoder(&letter_uart, (char *)data);
         }
     }
 }
