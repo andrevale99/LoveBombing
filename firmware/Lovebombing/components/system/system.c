@@ -14,7 +14,7 @@ void system_init(void)
 
 void tasks_start_uartlove_task(void)
 {
-    xTaskCreate(task_uartlove, "uartlove_task", 
+    xTaskCreatePinnedToCore(task_uartlove, "uartlove_task", 
         ENV_TASK_UARTLOVE_SIZE, NULL, ENV_TASK_UARTLOVE_PRIORITY, 
-        task_uartlove_get_handle());
+        task_uartlove_get_handle(), ENV_CORE_0);
 }
