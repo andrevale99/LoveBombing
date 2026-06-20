@@ -3,6 +3,7 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/queue.h"
 
 #include "env.h"
 #include "letter.h"
@@ -10,7 +11,7 @@
 
 #include "esp_log.h"
 
-static const char *TAG = "uartlove_task";
+static const char *TAG_UARTLOVE = "uartlove_task";
 TaskHandle_t handle_uartlove = NULL;
 
 static uartlove_config_t config =
@@ -29,32 +30,30 @@ static uartlove_config_t config =
         .buffersize = ENV_UART_BUFFER_SIZE,
 };
 
-
 // ====================================================+
 // TASK
 // ====================================================+
 void task_uartlove(void *pvargs)
 {
-    ESP_LOGI(TAG, "uartlove task started");
+    ESP_LOGI(TAG_UARTLOVE, "uartlove task started");
 
     uartlove_init(&config);
 
-    // Configure a temporary buffer for the incoming data
     uint8_t *data = (uint8_t *)malloc(ENV_UART_BUFFER_SIZE);
-    letter_t letter_uart = {0};
+    letter_t letter = {0};
 
     while (1)
     {
-        // Read data from the UART
         int len = uart_read_bytes(uartlove_get_port(), data, (ENV_UART_BUFFER_SIZE - 1),
                                   950 / portTICK_PERIOD_MS);
-        // Write data back to the UART
+
         uart_write_bytes(uartlove_get_port(), (const char *)data, len);
-        if (len)
+        if (len > 0)
         {
             data[len] = '\0';
-            // ESP_LOGI(TAG, "Recv str: %s", (char *)data);
-            letter_decoder(&letter_uart, (char *)data);
+            letter_decoder(&letter, (char *)data);
+
+            xQueueSend(queue_uartlove_to_mailman, &letter, -1);
         }
     }
 }

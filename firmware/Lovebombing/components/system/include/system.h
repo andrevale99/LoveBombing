@@ -7,7 +7,8 @@ extern "C" {
 
 void system_init(void);
 
-void tasks_start_uartlove_task(void);
+void start_uartlove_task(void);
+void start_mailman_task(void);
 
 #ifdef __cplusplus
 }
