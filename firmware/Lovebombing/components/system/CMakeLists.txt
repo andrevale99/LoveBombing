@@ -1,3 +1,3 @@
 idf_component_register(SRCS "system.c"
                     INCLUDE_DIRS "include"
-                    REQUIRES uartlove letter env)
+                    REQUIRES uartlove letter heartbeat env)
