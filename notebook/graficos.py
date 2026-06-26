@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # pulso_us,pulso_ms,duty,duty_percent
 #
 
-arquivo = "txts/dados.csv"
+arquivo = "notebook/dados.csv"
 
 df = pd.read_csv(
     arquivo,
