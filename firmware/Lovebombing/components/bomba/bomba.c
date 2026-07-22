@@ -1,24 +1,24 @@
-#include "heartbeat.h"
+#include "bomba.h"
 
-static const char *TAG = "heartbeat";
+static const char *TAG = "bomba";
 
-esp_err_t heartbeat_init(const heartbeat_t *heart)
+esp_err_t bomba_init(const bomba_t *heart)
 {
-    ESP_LOGI(TAG, "heartbeat install...");
+    ESP_LOGI(TAG, "bomba install...");
 
     ledc_timer_config_t ledc_timer = {
         .speed_mode = LEDC_LOW_SPEED_MODE,
         .duty_resolution = LEDC_TIMER_8_BIT,
-        .timer_num = HEARTBEAT_TIMER_DEFAULT,
+        .timer_num = BOMBA_TIMER_DEFAULT,
         .freq_hz = 1 * 1000 * 10, // Set output frequency at 10 kHz
         .clk_cfg = LEDC_AUTO_CLK,
     };
 
-    ESP_LOGI(TAG, "heartbeat timer config...");
+    ESP_LOGI(TAG, "bomba timer config...");
 
     ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
 
-    ESP_LOGI(TAG, "heartbeat timer config OK");
+    ESP_LOGI(TAG, "bomba timer config OK");
 
     if ((heart->gpioBomb_1[0] <= 0) || (heart->gpioBomb_1[1] <= 0) ||
         (heart->gpioBomb_2[0] <= 0) || (heart->gpioBomb_2[1] <= 0))
@@ -29,7 +29,7 @@ esp_err_t heartbeat_init(const heartbeat_t *heart)
 
         if (!(heart->gpioBomb_1[0] <= 0) || !(heart->gpioBomb_1[1] <= 0))
         {
-            ESP_LOGI(TAG, "heartbeat channels %i,%i config install...",
+            ESP_LOGI(TAG, "bomba channels %i,%i config install...",
                      heart->gpioBomb_1[0], heart->gpioBomb_1[1]);
 
             // Prepare and then apply the LEDC PWM channel configuration
@@ -42,9 +42,9 @@ esp_err_t heartbeat_init(const heartbeat_t *heart)
                 .duty = 0, // Set duty to 0%
                 .hpoint = 0,
             };
-            ESP_LOGI(TAG, "heartbeat channel config on gpio %i...", heart->gpioBomb_1[0]);
+            ESP_LOGI(TAG, "bomba channel config on gpio %i...", heart->gpioBomb_1[0]);
             ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel_1));
-            ESP_LOGI(TAG, "heartbeat channel config on gpio %i OK", heart->gpioBomb_1[0]);
+            ESP_LOGI(TAG, "bomba channel config on gpio %i OK", heart->gpioBomb_1[0]);
 
             ledc_channel_config_t ledc_channel_2 = {
                 .speed_mode = LEDC_LOW_SPEED_MODE,
@@ -55,14 +55,14 @@ esp_err_t heartbeat_init(const heartbeat_t *heart)
                 .duty = 0, // Set duty to 0%
                 .hpoint = 0,
             };
-            ESP_LOGI(TAG, "heartbeat channel config on gpio %i...", heart->gpioBomb_1[1]);
+            ESP_LOGI(TAG, "bomba channel config on gpio %i...", heart->gpioBomb_1[1]);
             ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel_2));
-            ESP_LOGI(TAG, "heartbeat channel config on gpio %i OK", heart->gpioBomb_1[1]);
+            ESP_LOGI(TAG, "bomba channel config on gpio %i OK", heart->gpioBomb_1[1]);
         }
 
     if (!(heart->gpioBomb_2[0] <= 0) || !(heart->gpioBomb_2[1] <= 0))
     {
-        ESP_LOGI(TAG, "heartbeat channels %i,%i config install...",
+        ESP_LOGI(TAG, "bomba channels %i,%i config install...",
                  heart->gpioBomb_2[0], heart->gpioBomb_2[1]);
 
         // Prepare and then apply the LEDC PWM channel configuration
@@ -76,9 +76,9 @@ esp_err_t heartbeat_init(const heartbeat_t *heart)
             .hpoint = 0,
         };
 
-        ESP_LOGI(TAG, "heartbeat channel config on gpio %i...", heart->gpioBomb_2[0]);
+        ESP_LOGI(TAG, "bomba channel config on gpio %i...", heart->gpioBomb_2[0]);
         ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel_1));
-        ESP_LOGI(TAG, "heartbeat channel config on gpio %i OK", heart->gpioBomb_2[0]);
+        ESP_LOGI(TAG, "bomba channel config on gpio %i OK", heart->gpioBomb_2[0]);
 
         ledc_channel_config_t ledc_channel_2 = {
             .speed_mode = LEDC_LOW_SPEED_MODE,
@@ -89,19 +89,19 @@ esp_err_t heartbeat_init(const heartbeat_t *heart)
             .duty = 0, // Set duty to 0%
             .hpoint = 0,
         };
-        ESP_LOGI(TAG, "heartbeat channel config on gpio %i...", heart->gpioBomb_2[1]);
+        ESP_LOGI(TAG, "bomba channel config on gpio %i...", heart->gpioBomb_2[1]);
         ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel_2));
-        ESP_LOGI(TAG, "heartbeat channel config on gpio %i OK", heart->gpioBomb_2[1]);
+        ESP_LOGI(TAG, "bomba channel config on gpio %i OK", heart->gpioBomb_2[1]);
     }
 
-    ESP_LOGI(TAG, "heartbeat instaled");
+    ESP_LOGI(TAG, "bomba instaled");
 
     return ESP_OK;
 }
 
-esp_err_t heartbeat_deinit(const heartbeat_t *heart)
+esp_err_t bomba_deinit(const bomba_t *heart)
 {
-    ESP_LOGI(TAG, "heartbeat uninstall...");
+    ESP_LOGI(TAG, "bomba uninstall...");
 
     if (heart == NULL)
     {
@@ -139,7 +139,7 @@ esp_err_t heartbeat_deinit(const heartbeat_t *heart)
         gpio_reset_pin(heart->gpioBomb_2[1]);
     }
 
-    ESP_LOGI(TAG, "heartbeat uninstalled");
+    ESP_LOGI(TAG, "bomba uninstalled");
 
     return ESP_OK;
 }
