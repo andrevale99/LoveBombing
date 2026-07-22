@@ -47,7 +47,7 @@ void task_ads111x(void *pvargs)
     else
         ESP_LOGI(TAG_ADS111X, "ADS111X encontrado");
 
-    ads111x_set_data_rate(ADS111X_DATA_RATE_32, &ads);
+    ads111x_set_data_rate(ADS111X_DATA_RATE_64, &ads);
     ads111x_set_gain(ADS111X_GAIN_4V096, &ads);
     ads111x_set_mode(ADS111X_MODE_SINGLE_SHOT, &ads);
 
