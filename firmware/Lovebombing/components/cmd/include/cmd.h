@@ -1,18 +1,18 @@
-#ifndef letter_h
-#define letter_h
+#ifndef CMD_H
+#define CMD_H
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-#define LETTER_CMD_SIZE 16
+#define CMD_STRING_SIZE 16
 
 typedef struct
 {
-    char cmd[LETTER_CMD_SIZE];
+    char cmd[CMD_STRING_SIZE];
     int value;
-}letter_t;
+}cmd_t;
 
 
 /**
@@ -41,7 +41,7 @@ typedef struct
  * letter->value = 100
  * @endcode
  *
- * @param[out] letter Ponteiro para a estrutura onde os dados decodificados
+ * @param[out] cmd Ponteiro para a estrutura onde os dados decodificados
  *                    serão armazenados.
  * @param[in,out] rx_buffer Buffer contendo a string a ser decodificada.
  *                          O conteúdo do buffer é modificado pela função.
@@ -53,6 +53,6 @@ typedef struct
  * @note A função utiliza strtok(), portanto o conteúdo original de
  *       @p rx_buffer é alterado.
  */
-int8_t letter_decoder(letter_t *, char *);
+int8_t cmd_decoder(cmd_t *, char *);
 
 #endif
