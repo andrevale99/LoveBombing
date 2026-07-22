@@ -1,5 +1,5 @@
-#ifndef system_h
-#define system_h
+#ifndef SYSTEM_H
+#define SYSTEM_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -7,9 +7,9 @@ extern "C" {
 
 void system_init(void);
 
-void start_uartlove_task(void);
-void start_mailman_task(void);
-void start_heartbeat_task(void);
+void start_uart_task(void);
+void start_middleware_task(void);
+void start_bomba_task(void);
 
 #ifdef __cplusplus
 }
