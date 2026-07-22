@@ -1,18 +1,18 @@
-#ifndef uartlove_task_h
-#define uartlove_task_h
+#ifndef UART_TASK_H
+#define UART_TASK_H
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
 
 #include "env.h"
-#include "letter.h"
-#include "uartlove.h"
+#include "cmd.h"
+#include "uart.h"
 
 #include "esp_log.h"
 
-static const char *TAG_UARTLOVE = "uartlove_task";
-TaskHandle_t handle_uartlove = NULL;
+static const char *TAG_UART= "uart_task";
+TaskHandle_t handleTask_uart = NULL;
 
 static uartlove_config_t config =
     {
@@ -33,34 +33,34 @@ static uartlove_config_t config =
 // ====================================================+
 // TASK
 // ====================================================+
-void task_uartlove(void *pvargs)
+void task_uart(void *pvargs)
 {
-    ESP_LOGI(TAG_UARTLOVE, "uartlove task started");
+    ESP_LOGI(TAG_UART, "uart task started");
 
-    uartlove_init(&config);
+    uart_init(&config);
 
     uint8_t *data = (uint8_t *)malloc(ENV_UART_BUFFER_SIZE);
-    letter_t letter = {0};
+    cmd_t cmd = {0};
 
     while (1)
     {
-        int len = uart_read_bytes(uartlove_get_port(), data, (ENV_UART_BUFFER_SIZE - 1),
+        int len = uart_read_bytes(uart_get_port(), data, (ENV_UART_BUFFER_SIZE - 1),
                                   950 / portTICK_PERIOD_MS);
 
-        uart_write_bytes(uartlove_get_port(), (const char *)data, len);
+        uart_write_bytes(uart_get_port(), (const char *)data, len);
         if (len > 0)
         {
             data[len] = '\0';
-            letter_decoder(&letter, (char *)data);
+            cmd_decoder(&cmd, (char *)data);
 
-            xQueueSend(queue_uartlove_to_mailman, &letter, -1);
+            xQueueSend(queue_uart_to_middleware, &cmd, -1);
         }
     }
 }
 
-TaskHandle_t *task_uartlove_get_handle(void)
+TaskHandle_t *task_uart_get_handleTask(void)
 {
-    return &handle_uartlove;
+    return &handleTask_uart;
 }
 
 #endif

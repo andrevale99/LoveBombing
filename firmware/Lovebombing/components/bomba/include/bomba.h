@@ -1,5 +1,5 @@
-#ifndef heartbeat_h
-#define heartbeat_h
+#ifndef BOMBA_H
+#define BOMBA_H
 
 #include "driver/ledc.h"
 #include "driver/gpio.h"
@@ -7,8 +7,8 @@
 #include "esp_log.h"
 #include "esp_err.h"
 
-#define HEARTBEAT_GPIO_BOMB_CHANNELS 2
-#define HEARTBEAT_TIMER_DEFAULT 1
+#define BOMBA_GPIO_BOMB_CHANNELS 2
+#define BOMBA_TIMER_DEFAULT 1
 
 /**
  * @brief Estrutura de configuração do módulo heartbeat.
@@ -21,7 +21,7 @@ typedef struct
      * gpioBomb_1[0]: primeiro canal da bomba 1.  
      * gpioBomb_1[1]: segundo canal da bomba 1.
      */
-    int gpioBomb_1[HEARTBEAT_GPIO_BOMB_CHANNELS];
+    int gpioBomb_1[BOMBA_GPIO_BOMB_CHANNELS];
 
     /**
      * @brief GPIOs associados à bomba 2.
@@ -29,9 +29,9 @@ typedef struct
      * gpioBomb_2[0]: primeiro canal da bomba 2.  
      * gpioBomb_2[1]: segundo canal da bomba 2.
      */
-    int gpioBomb_2[HEARTBEAT_GPIO_BOMB_CHANNELS];
+    int gpioBomb_2[BOMBA_GPIO_BOMB_CHANNELS];
 
-} heartbeat_t;
+} bomba_t;
 
 
 /**
@@ -45,7 +45,7 @@ typedef struct
  * ESP_ERR_INVALID_ARG caso algum dos GPIOs seja inválido. Em caso de sucesso,
  * os canais PWM são configurados com duty cycle inicial igual a zero.
  *
- * @param[in] heart Ponteiro para a estrutura de configuração do módulo
+ * @param[in] bomba Ponteiro para a estrutura de configuração do módulo
  *                  heartbeat, contendo os GPIOs associados às bombas.
  *
  * @return ESP_OK se a inicialização for concluída com sucesso.
@@ -57,7 +57,7 @@ typedef struct
  * @warning O ponteiro @p heart deve apontar para uma estrutura válida e
  *          devidamente inicializada antes da chamada desta função.
  */
-esp_err_t heartbeat_init(const heartbeat_t *);
+esp_err_t bomba_init(const bomba_t *);
 
 /**
  * @brief Desinicializa o módulo heartbeat e libera os recursos utilizados.
@@ -82,6 +82,6 @@ esp_err_t heartbeat_init(const heartbeat_t *);
  * @warning O ponteiro @p heart deve apontar para uma estrutura válida
  *          previamente utilizada na inicialização do módulo.
  */
-esp_err_t heartbeat_deinit(const heartbeat_t *);
+esp_err_t bomba_deinit(const bomba_t *);
 
 #endif

@@ -4,13 +4,13 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 
-#include "letter.h"
+#include "cmd.h"
 
-QueueHandle_t queue_uartlove_to_mailman = NULL;
+QueueHandle_t queue_uart_to_middleware = NULL;
 
 void queue_start(void)
 {
-    queue_uartlove_to_mailman = xQueueCreate(3, sizeof(letter_t));
+    queue_uart_to_middleware = xQueueCreate(3, sizeof(cmd_t));
 }
 
 #endif

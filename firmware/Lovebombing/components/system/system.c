@@ -6,36 +6,36 @@
 #include "freertos/task.h"
 
 #include "queue_task.h"
-#include "uartlove_task.h"
-#include "mailman_task.h"
-#include "heartbeat_task.h"
+#include "uart_task.h"
+#include "middleware_task.h"
+#include "bomba_task.h"
 
 void system_init(void)
 {
     queue_start();
 
-    start_uartlove_task();
-    start_mailman_task();
-    start_heartbeat_task();
+    start_uart_task();
+    start_middleware_task();
+    start_bomba_task();
 }
 
-void start_uartlove_task(void)
+void start_uart_task(void)
 {
-    xTaskCreatePinnedToCore(task_uartlove, "uartlove_task",
-                            ENV_TASK_UARTLOVE_STACK_SIZE, NULL, ENV_TASK_UARTLOVE_PRIORITY,
-                            task_uartlove_get_handle(), ENV_CORE_0);
+    xTaskCreatePinnedToCore(task_uart, "uart_task",
+                            ENV_TASK_UART_STACK_SIZE, NULL, ENV_TASK_UART_PRIORITY,
+                            task_uart_get_handleTask(), ENV_CORE_0);
 }
 
-void start_mailman_task(void)
+void start_middleware_task(void)
 {
-    xTaskCreatePinnedToCore(task_mailman, "mailman_task",
-                            ENV_TASK_MAILMAN_STACK_SIZE, NULL, ENV_TASK_MAILMAN_PRIORITY,
-                            task_mailman_get_handle(), ENV_CORE_0);
+    xTaskCreatePinnedToCore(task_middleware, "middleware_task",
+                            ENV_TASK_MIDDLEWARE_STACK_SIZE, NULL, ENV_TASK_MIDDLEWARE_PRIORITY,
+                            task_middleware_get_handleTask(), ENV_CORE_0);
 }
 
-void start_heartbeat_task(void)
+void start_bomba_task(void)
 {
-    xTaskCreatePinnedToCore(task_heartbeat, "heartbeat_task",
-                            ENV_TASK_HEARTBEAT_STACK_SIZE, NULL, ENV_TASK_HEARTBEAT_PRIORITY,
-                            task_heartbeat_get_handle(), ENV_CORE_0);
+    xTaskCreatePinnedToCore(task_bomba, "heartbeat_task",
+                            ENV_TASK_BOMBA_STACK_SIZE, NULL, ENV_TASK_BOMBA_PRIORITY,
+                            task_bomba_get_handleTask(), ENV_CORE_0);
 }
