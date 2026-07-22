@@ -9,6 +9,7 @@
 #include "uart_task.h"
 #include "middleware_task.h"
 #include "bomba_task.h"
+#include "ads111x_task.h"
 
 void system_init(void)
 {
@@ -35,7 +36,14 @@ void start_middleware_task(void)
 
 void start_bomba_task(void)
 {
-    xTaskCreatePinnedToCore(task_bomba, "heartbeat_task",
+    xTaskCreatePinnedToCore(task_bomba, "bomba_task",
                             ENV_TASK_BOMBA_STACK_SIZE, NULL, ENV_TASK_BOMBA_PRIORITY,
                             task_bomba_get_handleTask(), ENV_CORE_0);
+}
+
+void start_ads111x_task(void)
+{
+    xTaskCreatePinnedToCore(task_ads111x, "adx111x_task",
+                            ENV_TASK_ADS111X_STACK_SIZE, NULL, ENV_TASK_ADS111X_PRIORITY,
+                            task_ads111x_get_handleTask(), ENV_CORE_0);
 }
