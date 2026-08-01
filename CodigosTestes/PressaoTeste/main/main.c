@@ -221,7 +221,7 @@ void app_main(void)
     }
 
     ads111x_set_data_rate(
-        ADS111X_DATA_RATE_32,
+        ADS111X_DATA_RATE_475,
         &ads);
 
     ads111x_set_gain(
