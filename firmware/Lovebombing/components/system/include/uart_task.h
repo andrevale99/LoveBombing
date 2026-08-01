@@ -51,7 +51,7 @@ void task_uart(void *pvargs)
         int len = uart_read_bytes(uart_get_port(),
                                   rx_data,
                                   sizeof(rx_data),
-                                  10 / portTICK_PERIOD_MS);
+                                  pdMS_TO_TICKS(10));
 
         if (len > 0)
         {
