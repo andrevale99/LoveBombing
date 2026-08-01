@@ -9,6 +9,12 @@
 
 #define BOMBA_TIMER_DEFAULT 1
 
+typedef enum
+{
+    BOMB_1 = 0,
+    BOMB_2 = 1,
+}which_bomb_t;
+
 /**
  * @brief Estrutura de configuração do módulo heartbeat.
  */
@@ -19,13 +25,16 @@ typedef struct
      */
     int gpioBomb_1;
 
+    ledc_channel_t channel_gpiobomb1;
+
     /**
      * @brief GPIOs associados à bomba 2.
      */
     int gpioBomb_2;
 
-} bomba_t;
+    ledc_channel_t channel_gpiobomb2;
 
+} bomba_t;
 
 /**
  * @brief Inicializa o módulo heartbeat e configura os canais PWM das bombas.
@@ -68,13 +77,11 @@ esp_err_t bomba_init(const bomba_t *);
  * @return ESP_OK se a desinicialização for concluída com sucesso.
  * @return ESP_ERR_INVALID_ARG se o ponteiro @p heart for nulo.
  *
- * @note Os canais LEDC utilizados são:
- *       - LEDC_CHANNEL_0 para a bomba 1;
- *       - LEDC_CHANNEL_1 para a bomba 2.
- *
  * @warning O ponteiro @p heart deve apontar para uma estrutura válida
  *          previamente utilizada na inicialização do módulo.
  */
 esp_err_t bomba_deinit(const bomba_t *);
+
+esp_err_t bomba_set_duty(const bomba_t *bomba, which_bomb_t select, int duty);
 
 #endif

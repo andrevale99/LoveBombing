@@ -13,8 +13,10 @@ TaskHandle_t handleTask_bomba = NULL;
 
 bomba_t bomba = {
     .gpioBomb_1 = 13,
+    .channel_gpiobomb1 = LEDC_CHANNEL_0,
 
     .gpioBomb_2 = -1,
+    .channel_gpiobomb2 = -1,
 };
 
 void task_bomba(void *pvargs)
@@ -41,13 +43,7 @@ void task_bomba(void *pvargs)
 
                 ESP_LOGI(TAG_BOMBA, "Novo duty: %i", duty);
 
-                ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, duty);
-                ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0);
-            }
-            else if (strcmp(_cmd.cmd, "X") == 0)
-            {
-                ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
-                ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0);
+                bomba_set_duty(&bomba, BOMB_1, duty);
             }
         }
 

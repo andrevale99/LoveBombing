@@ -28,7 +28,7 @@ esp_err_t bomba_init(const bomba_t *heart)
         // Prepare and then apply the LEDC PWM channel configuration
         ledc_channel_config_t ledc_channel_1 = {
             .speed_mode = LEDC_HIGH_SPEED_MODE,
-            .channel = LEDC_CHANNEL_0,
+            .channel = heart->channel_gpiobomb1,
             .timer_sel = 1,
             .intr_type = LEDC_INTR_DISABLE,
             .gpio_num = heart->gpioBomb_1,
@@ -48,7 +48,7 @@ esp_err_t bomba_init(const bomba_t *heart)
         // Prepare and then apply the LEDC PWM channel configuration
         ledc_channel_config_t ledc_channel_1 = {
             .speed_mode = LEDC_LOW_SPEED_MODE,
-            .channel = LEDC_CHANNEL_1,
+            .channel = heart->channel_gpiobomb1,
             .timer_sel = 1,
             .intr_type = LEDC_INTR_DISABLE,
             .gpio_num = heart->gpioBomb_2,
@@ -101,4 +101,32 @@ esp_err_t bomba_deinit(const bomba_t *heart)
     ESP_LOGI(TAG, "bomba uninstalled");
 
     return ESP_OK;
+}
+
+esp_err_t bomba_set_duty(const bomba_t *bomba, which_bomb_t select, int duty)
+{
+    esp_err_t ret = ESP_ERR_INVALID_ARG;
+
+    if (!bomba)
+        return ret;
+
+    switch (select)
+    {
+    case BOMB_1:
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, bomba->channel_gpiobomb1, duty);
+        ret = ledc_update_duty(LEDC_HIGH_SPEED_MODE, bomba->channel_gpiobomb1);
+        break;
+
+    case BOMB_2:
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, bomba->channel_gpiobomb2, duty);
+        ret = ledc_update_duty(LEDC_HIGH_SPEED_MODE, bomba->channel_gpiobomb2);
+        break;
+
+    default:
+        ret = ESP_ERR_NOT_FOUND;
+        ESP_LOGE(TAG, "Bomb not found");
+        break;
+    }
+
+    return ret;
 }
