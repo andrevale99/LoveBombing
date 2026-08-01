@@ -13,7 +13,7 @@ TaskHandle_t handleTask_bomba = NULL;
 
 const bomba_t bomba = {
     .gpioBomb_1[0] = 10,
-    .gpioBomb_1[1] = 11,
+    .gpioBomb_1[1] = -1,
 
     .gpioBomb_2[0] = -1,
     .gpioBomb_2[1] = -1,
@@ -23,11 +23,32 @@ void task_bomba(void *pvargs)
 {
     ESP_LOGI(TAG_BOMBA, "bomba task started");
 
+    cmd_t _cmd = {0};
+    int duty = 0;
+
     bomba_init(&bomba);
 
-    while(1)
+    while (1)
     {
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        if (xQueueReceive(queue_middleware_to_bomba, &_cmd, -1))
+        {
+            if (strcmp(_cmd.cmd, "S") == 0)
+            {
+                duty = ((float)_cmd.value) / 100. * 256.;
+
+                if (duty > 255)
+                    duty = 254;
+                else if (duty < 0)
+                    duty = 0;
+
+                ESP_LOGI(TAG_BOMBA, "Novo duty: %i", duty);
+
+                ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, duty);
+                ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
+            }
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 
     bomba_deinit(&bomba);

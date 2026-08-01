@@ -11,7 +11,9 @@
 
 #include "esp_log.h"
 
-static const char *TAG_UART= "uart_task";
+#define CMD_BUFFER_SIZE 128
+
+static const char *TAG_UART = "uart_task";
 TaskHandle_t handleTask_uart = NULL;
 
 static uartlove_config_t config =
@@ -39,21 +41,53 @@ void task_uart(void *pvargs)
 
     uart_init(&config);
 
-    uint8_t *data = (uint8_t *)malloc(ENV_UART_BUFFER_SIZE);
+    uint8_t *rx_data = (uint8_t *)malloc(ENV_UART_BUFFER_SIZE);
+    char cmd_buffer[CMD_BUFFER_SIZE];
     cmd_t cmd = {0};
+    uint16_t index = 0;
 
     while (1)
     {
-        int len = uart_read_bytes(uart_get_port(), data, (ENV_UART_BUFFER_SIZE - 1),
-                                  950 / portTICK_PERIOD_MS);
+        int len = uart_read_bytes(uart_get_port(),
+                                  rx_data,
+                                  sizeof(rx_data),
+                                  10 / portTICK_PERIOD_MS);
 
-        uart_write_bytes(uart_get_port(), (const char *)data, len);
         if (len > 0)
         {
-            data[len] = '\0';
-            cmd_decoder(&cmd, (char *)data);
+            // Ecoa os caracteres recebidos
+            uart_write_bytes(uart_get_port(), (const char *)rx_data, len);
 
-            xQueueSend(queue_uart_to_middleware, &cmd, -1);
+            for (int i = 0; i < len; i++)
+            {
+                char c = (char)rx_data[i];
+
+                // Enter pressionado?
+                if (c == '\r' || c == '\n')
+                {
+                    // Ignora Enter se o buffer estiver vazio
+                    if (index == 0)
+                        continue;
+
+                    // Finaliza a string sem incluir o Enter
+                    cmd_buffer[index] = '\0';
+
+                    cmd_decoder(&cmd, cmd_buffer);
+                    xQueueSend(queue_uart_to_middleware, &cmd, portMAX_DELAY);
+
+                    // Limpa o buffer para o próximo comando
+                    index = 0;
+                    memset(&cmd_buffer, 0, sizeof(cmd_buffer));
+                }
+                else
+                {
+                    // Armazena o caractere, evitando overflow
+                    if (index < (ENV_UART_BUFFER_SIZE - 1))
+                    {
+                        cmd_buffer[index++] = c;
+                    }
+                }
+            }
         }
     }
 }

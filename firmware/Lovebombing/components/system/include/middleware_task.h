@@ -23,6 +23,10 @@ void task_middleware(void *pvargs)
         if (xQueueReceive(queue_uart_to_middleware, &cmd, -1) == pdTRUE)
         {
             ESP_LOGI(TAG_MIDDLEWARE, "%s: %d", cmd.cmd, cmd.value);
+
+            if(strcmp(cmd.cmd, "S") == 0 || strcmp(cmd.cmd, "T") == 0)
+                xQueueSend(queue_middleware_to_bomba, &cmd, -1);
+
             memset(&cmd, 0, sizeof(cmd));
         }
         vTaskDelay(pdMS_TO_TICKS(100));
