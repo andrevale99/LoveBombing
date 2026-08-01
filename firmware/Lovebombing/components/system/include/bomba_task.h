@@ -11,12 +11,10 @@
 static const char *TAG_BOMBA = "bomba_task";
 TaskHandle_t handleTask_bomba = NULL;
 
-const bomba_t bomba = {
-    .gpioBomb_1[0] = 10,
-    .gpioBomb_1[1] = -1,
+bomba_t bomba = {
+    .gpioBomb_1 = 13,
 
-    .gpioBomb_2[0] = -1,
-    .gpioBomb_2[1] = -1,
+    .gpioBomb_2 = -1,
 };
 
 void task_bomba(void *pvargs)
@@ -43,8 +41,8 @@ void task_bomba(void *pvargs)
 
                 ESP_LOGI(TAG_BOMBA, "Novo duty: %i", duty);
 
-                ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, duty);
-                ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
+                ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, duty);
+                ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0);
             }
         }
 

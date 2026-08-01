@@ -7,7 +7,6 @@
 #include "esp_log.h"
 #include "esp_err.h"
 
-#define BOMBA_GPIO_BOMB_CHANNELS 2
 #define BOMBA_TIMER_DEFAULT 1
 
 /**
@@ -17,19 +16,13 @@ typedef struct
 {
     /**
      * @brief GPIOs associados à bomba 1.
-     *
-     * gpioBomb_1[0]: primeiro canal da bomba 1.  
-     * gpioBomb_1[1]: segundo canal da bomba 1.
      */
-    int gpioBomb_1[BOMBA_GPIO_BOMB_CHANNELS];
+    int gpioBomb_1;
 
     /**
      * @brief GPIOs associados à bomba 2.
-     *
-     * gpioBomb_2[0]: primeiro canal da bomba 2.  
-     * gpioBomb_2[1]: segundo canal da bomba 2.
      */
-    int gpioBomb_2[BOMBA_GPIO_BOMB_CHANNELS];
+    int gpioBomb_2;
 
 } bomba_t;
 
@@ -76,8 +69,8 @@ esp_err_t bomba_init(const bomba_t *);
  * @return ESP_ERR_INVALID_ARG se o ponteiro @p heart for nulo.
  *
  * @note Os canais LEDC utilizados são:
- *       - LEDC_CHANNEL_0 e LEDC_CHANNEL_1 para a bomba 1;
- *       - LEDC_CHANNEL_2 e LEDC_CHANNEL_3 para a bomba 2.
+ *       - LEDC_CHANNEL_0 para a bomba 1;
+ *       - LEDC_CHANNEL_1 para a bomba 2.
  *
  * @warning O ponteiro @p heart deve apontar para uma estrutura válida
  *          previamente utilizada na inicialização do módulo.

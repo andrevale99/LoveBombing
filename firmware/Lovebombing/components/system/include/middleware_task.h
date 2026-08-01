@@ -24,7 +24,8 @@ void task_middleware(void *pvargs)
         {
             ESP_LOGI(TAG_MIDDLEWARE, "%s: %d", cmd.cmd, cmd.value);
 
-            if(strcmp(cmd.cmd, "S") == 0 || strcmp(cmd.cmd, "T") == 0)
+            if (strcmp(cmd.cmd, "S") == 0 || strcmp(cmd.cmd, "T") == 0 ||
+                strcmp(cmd.cmd, "X") == 0)
                 xQueueSend(queue_middleware_to_bomba, &cmd, -1);
 
             memset(&cmd, 0, sizeof(cmd));

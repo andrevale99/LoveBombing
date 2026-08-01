@@ -23,7 +23,7 @@ void start_uart_task(void)
 {
     xTaskCreatePinnedToCore(task_uart, "uart_task",
                             ENV_TASK_UART_STACK_SIZE, NULL, ENV_TASK_UART_PRIORITY,
-                            task_uart_get_handleTask(), ENV_CORE_1);
+                            task_uart_get_handleTask(), ENV_CORE_0);
 }
 
 void start_middleware_task(void)
