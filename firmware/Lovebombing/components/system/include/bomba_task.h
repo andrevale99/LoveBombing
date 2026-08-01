@@ -44,6 +44,11 @@ void task_bomba(void *pvargs)
                 ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, duty);
                 ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0);
             }
+            else if (strcmp(_cmd.cmd, "X") == 0)
+            {
+                ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
+                ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0);
+            }
         }
 
         vTaskDelay(pdMS_TO_TICKS(10));
