@@ -1,0 +1,7 @@
+"-specs=/home/andre/Documents/Git/LoveBombing/CodigosTestes/PressaoTransiente/build/bootloader/specs/picolibc.specs"
+-Wno-frame-address
+-mlongcalls
+-fno-builtin-memcpy
+-fno-builtin-memset
+-fno-builtin-bzero
+-fno-rtti
