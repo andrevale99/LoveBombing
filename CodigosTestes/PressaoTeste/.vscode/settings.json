@@ -4,7 +4,15 @@
   "idf.openOcdConfigs": [
     "board/esp32-wrover-kit-3.3v.cfg"
   ],
+<<<<<<< HEAD
   "idf.port": "detect",
+=======
+<<<<<<< HEAD
+  "idf.port": "detect",
+=======
+  "idf.port": "/dev/ttyUSB0",
+>>>>>>> origin/main
+>>>>>>> main
   "idf.currentSetup": "/home/andre/.espressif/v6.0.1/esp-idf",
   "idf.customExtraVars": {
     "IDF_TARGET": "esp32"
@@ -14,5 +22,14 @@
     "--background-index",
     "--query-driver=**",
     "--compile-commands-dir=/home/andre/Documents/Git/LoveBombing/CodigosTestes/PressaoTeste/build"
+<<<<<<< HEAD
   ]
+=======
+<<<<<<< HEAD
+  ]
+=======
+  ],
+  "idf.flashType": "UART"
+>>>>>>> origin/main
+>>>>>>> main
 }

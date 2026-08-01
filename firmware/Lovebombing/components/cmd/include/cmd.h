@@ -14,6 +14,13 @@ typedef struct
     int value;
 }cmd_t;
 
+typedef struct
+{
+    float pressao;
+    float pressaoTotal;
+    float vazao;
+    int duty;
+} data_t;
 
 /**
  * @brief Decodifica uma string de comando e armazena os resultados em uma estrutura.
