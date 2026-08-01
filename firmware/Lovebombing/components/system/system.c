@@ -18,6 +18,7 @@ void system_init(void)
     start_uart_task();
     start_middleware_task();
     start_bomba_task();
+    start_process_data();
 }
 
 void start_uart_task(void)
