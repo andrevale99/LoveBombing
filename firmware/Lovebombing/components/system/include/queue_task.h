@@ -32,7 +32,7 @@ void queue_start(void)
         ESP_LOGE(TAG_QUEUE_START, "Erro ao inicializar a queue data->uart");
     ESP_LOGI(TAG_QUEUE_START, "Queue data->uart inicializada");
 
-    queue_bomba_to_data = xQueueCreate(3, sizeof(int));
+    queue_bomba_to_data = xQueueCreate(100, sizeof(int));
     if (queue_bomba_to_data == NULL)
         ESP_LOGE(TAG_QUEUE_START, "Erro ao inicializar a queue bomba->data");
     ESP_LOGI(TAG_QUEUE_START, "Queue dbomba->data inicializada");

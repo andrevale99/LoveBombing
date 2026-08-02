@@ -28,6 +28,8 @@ TaskHandle_t handleTask_data = NULL;
 ads111x_struct_t ads = {0};
 i2c_master_bus_handle_t handle_i2cmaster = NULL;
 
+static TickType_t xLastWakeTime;
+
 void set_offset_pressure(data_t *data, ads111x_struct_t *ads)
 {
     float v_0 = 0.0;
@@ -68,6 +70,9 @@ void task_data(void *pvargs)
     int flagDuty = 0;
     data_t data = {0};
 
+    const TickType_t xPeriodo = pdMS_TO_TICKS(5);
+    xLastWakeTime = xTaskGetTickCount();
+
     i2c_master_bus_config_t i2c_mst_config = {
         .clk_source = I2C_CLK_SRC_DEFAULT,
         .i2c_port = I2C_NUM_0,
@@ -105,7 +110,7 @@ void task_data(void *pvargs)
         float pulso_ms = Apwm * expf(-Bpwm * DUTY_TO_PERCENT(data.duty)) + Cpwm;
         data.vazao = Avazao * exp(-Bvazao * pulso_ms) + Cvazao;
 
-        if (DUTY_TO_PERCENT(data.duty) < 28 )
+        if (DUTY_TO_PERCENT(data.duty) < 28)
             data.vazao = 0;
 
         ads111x_set_input_mux(ADS111X_MUX_0_GND, &ads);
@@ -116,7 +121,7 @@ void task_data(void *pvargs)
 
         xQueueSend(queue_data_to_uart, &data, 0);
 
-        vTaskDelay(pdMS_TO_TICKS(5));
+        vTaskDelayUntil(&xLastWakeTime, xPeriodo);
     }
 }
 
