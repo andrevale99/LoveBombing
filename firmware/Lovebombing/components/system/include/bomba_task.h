@@ -41,7 +41,7 @@ void task_bomba(void *pvargs)
                 else if (duty < 0)
                     duty = 0;
 
-                ESP_LOGI(TAG_BOMBA, "Novo duty: %i", duty);
+                // ESP_LOGI(TAG_BOMBA, "Novo duty: %i", duty);
 
                 bomba_set_duty(&bomba, BOMB_1, duty);
 
