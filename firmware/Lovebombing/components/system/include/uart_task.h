@@ -5,6 +5,8 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 
+#include "driver/gptimer.h"
+
 #include "env.h"
 #include "cmd.h"
 #include "uart.h"
@@ -17,7 +19,9 @@
 static const char *TAG_UART = "uart_task";
 TaskHandle_t handleTask_uart = NULL;
 
-static uartlove_config_t config =
+static gptimer_handle_t timer = NULL;
+
+static uartlove_config_t uart =
     {
         .uartconfig = {
             .baud_rate = ENV_UART_BAUDRATE,
@@ -40,7 +44,7 @@ void task_uart(void *pvargs)
 {
     ESP_LOGI(TAG_UART, "uart task started");
 
-    uart_init(&config);
+    uart_init(&uart);
 
     uint8_t *rx_data = (uint8_t *)malloc(ENV_UART_BUFFER_SIZE);
     char cmd_buffer[CMD_BUFFER_SIZE];
@@ -48,6 +52,19 @@ void task_uart(void *pvargs)
     cmd_t cmd = {0};
     uint16_t index = 0;
     data_t data = {0};
+    uint64_t tempo_atual = 0;
+
+    gptimer_config_t config = {
+        .clk_src = GPTIMER_CLK_SRC_DEFAULT,
+        .direction = GPTIMER_COUNT_UP,
+        .resolution_hz = 1000000, // 1 MHz -> 1 contagem = 1 us
+    };
+
+    ESP_ERROR_CHECK(gptimer_new_timer(&config, &timer));
+    ESP_ERROR_CHECK(gptimer_enable(timer));
+    ESP_ERROR_CHECK(gptimer_start(timer));
+
+    gptimer_get_raw_count(timer, &tempo_atual);
 
     while (1)
     {
@@ -95,9 +112,12 @@ void task_uart(void *pvargs)
 
         if (xQueueReceive(queue_data_to_uart, &data, 0) == pdTRUE)
         {
+            gptimer_get_raw_count(timer, &tempo_atual);
+
             int tx_len = snprintf(send_buffer,
                                   SEND_BUFFER_SIZE,
-                                  "%.2f;%.2f;%.3f;%i;%.2f\n",
+                                  "%lld;%.2f;%.2f;%.3f;%i;%.2f\n",
+                                  tempo_atual,
                                   data.pressaoTotal,
                                   data.pressao,
                                   data.vazao,
@@ -106,6 +126,7 @@ void task_uart(void *pvargs)
 
             if (tx_len > 0)
             {
+
                 uart_write_bytes(uart_get_port(), send_buffer, tx_len);
             }
         }

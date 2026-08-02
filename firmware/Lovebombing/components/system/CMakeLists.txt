@@ -1,3 +1,3 @@
 idf_component_register(SRCS "system.c"
                     INCLUDE_DIRS "include"
-                    REQUIRES uart cmd bomba _env ads111x esp_driver_i2c)
+                    REQUIRES uart cmd bomba _env ads111x esp_driver_i2c esp_driver_gptimer)
