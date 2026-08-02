@@ -84,9 +84,11 @@ void task_data(void *pvargs)
     ads111x_set_gain(ADS111X_GAIN_4V096, &ads);
     ads111x_set_mode(ADS111X_MODE_SINGLE_SHOT, &ads);
 
+    set_offset_pressure(&data, &ads);
+
     while (1)
     {
-        if (xQueueReceive(queue_bomba_to_data, &flagDuty, -1) == pdTRUE)
+        if (xQueueReceive(queue_bomba_to_data, &flagDuty, 0) == pdTRUE)
             if (flagDuty >= 0)
                 data.duty = flagDuty;
 
@@ -95,6 +97,8 @@ void task_data(void *pvargs)
         data.adc = ads.conversion;
 
         process_pressures(&data);
+
+        xQueueSend(queue_data_to_uart, &data, 0);
         
         vTaskDelay(pdMS_TO_TICKS(5));
     }

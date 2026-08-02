@@ -12,6 +12,7 @@
 #include "esp_log.h"
 
 #define CMD_BUFFER_SIZE 128
+#define SEND_BUFFER_SIZE 256
 
 static const char *TAG_UART = "uart_task";
 TaskHandle_t handleTask_uart = NULL;
@@ -43,8 +44,10 @@ void task_uart(void *pvargs)
 
     uint8_t *rx_data = (uint8_t *)malloc(ENV_UART_BUFFER_SIZE);
     char cmd_buffer[CMD_BUFFER_SIZE];
+    char send_buffer[SEND_BUFFER_SIZE];
     cmd_t cmd = {0};
     uint16_t index = 0;
+    data_t data = {0};
 
     while (1)
     {
@@ -56,7 +59,7 @@ void task_uart(void *pvargs)
         if (len > 0)
         {
             // Ecoa os caracteres recebidos
-            uart_write_bytes(uart_get_port(), (const char *)rx_data, len);
+            // uart_write_bytes(uart_get_port(), (const char *)rx_data, len);
 
             for (int i = 0; i < len; i++)
             {
@@ -87,6 +90,23 @@ void task_uart(void *pvargs)
                         cmd_buffer[index++] = c;
                     }
                 }
+            }
+        }
+
+        if (xQueueReceive(queue_data_to_uart, &data, 0) == pdTRUE)
+        {
+            int tx_len = snprintf(send_buffer,
+                                  SEND_BUFFER_SIZE,
+                                  "%.2f;%.2f;%.3f;%i;%.2f\n",
+                                  data.pressaoTotal,
+                                  data.pressao,
+                                  data.vazao,
+                                  data.duty,
+                                  (((float)data.duty / 256.f * 100.f)));
+
+            if (tx_len > 0)
+            {
+                uart_write_bytes(uart_get_port(), send_buffer, tx_len);
             }
         }
     }
