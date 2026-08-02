@@ -92,6 +92,9 @@ void task_data(void *pvargs)
             if (flagDuty >= 0)
                 data.duty = flagDuty;
 
+        float pulso_ms = Apulso * expf(-Bpulso * data.duty) + Cpulso;
+        data.vazao = Avazao * exp(-Bvazao * pulso_ms) + Cvazao;
+
         ads111x_set_input_mux(ADS111X_MUX_0_GND, &ads);
         ads111x_get_conversion_sigle_ended(&ads);
         data.adc = ads.conversion;
@@ -99,7 +102,7 @@ void task_data(void *pvargs)
         process_pressures(&data);
 
         xQueueSend(queue_data_to_uart, &data, 0);
-        
+
         vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
