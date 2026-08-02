@@ -13,6 +13,7 @@ static char *TAG_QUEUE_START = "queue_system";
 QueueHandle_t queue_uart_to_middleware = NULL;
 QueueHandle_t queue_middleware_to_bomba = NULL;
 QueueHandle_t queue_data_to_uart = NULL;
+QueueHandle_t queue_bomba_to_data = NULL;
 
 void queue_start(void)
 {
@@ -30,6 +31,11 @@ void queue_start(void)
     if (queue_data_to_uart == NULL)
         ESP_LOGE(TAG_QUEUE_START, "Erro ao inicializar a queue data->uart");
     ESP_LOGI(TAG_QUEUE_START, "Queue data->uart inicializada");
+
+    queue_bomba_to_data = xQueueCreate(3, sizeof(int));
+    if (queue_bomba_to_data == NULL)
+        ESP_LOGE(TAG_QUEUE_START, "Erro ao inicializar a queue bomba->data");
+    ESP_LOGI(TAG_QUEUE_START, "Queue dbomba->data inicializada");
 }
 
 #endif

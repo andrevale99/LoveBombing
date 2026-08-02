@@ -16,6 +16,8 @@ typedef struct
 
 typedef struct
 {
+    float offset;
+    uint16_t adc;
     float pressao;
     float pressaoTotal;
     float vazao;

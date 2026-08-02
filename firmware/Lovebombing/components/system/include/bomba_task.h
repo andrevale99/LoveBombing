@@ -44,6 +44,8 @@ void task_bomba(void *pvargs)
                 ESP_LOGI(TAG_BOMBA, "Novo duty: %i", duty);
 
                 bomba_set_duty(&bomba, BOMB_1, duty);
+
+                xQueueSend(queue_bomba_to_data, &duty, -1);
             }
         }
 

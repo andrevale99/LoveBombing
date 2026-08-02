@@ -18,11 +18,45 @@ TaskHandle_t handleTask_data = NULL;
 ads111x_struct_t ads = {0};
 i2c_master_bus_handle_t handle_i2cmaster = NULL;
 
+void set_offset_pressure(data_t *data, ads111x_struct_t *ads)
+{
+    float v_0 = 0.0;
+    uint8_t cont = 0;
+    float soma_p0 = 0;
+
+    data->offset = 0.0;
+
+    for (cont = 0; cont < 100; ++cont)
+    {
+        ads111x_set_input_mux(ADS111X_MUX_0_GND, ads);
+        ads111x_get_conversion_sigle_ended(ads);
+        data->adc = ads->conversion;
+
+        v_0 = (data->adc * 0.1875) / 1000;
+
+        data->pressaoTotal = (((v_0 / 5) - 0.04) / 0.018);
+
+        soma_p0 += data->pressaoTotal;
+    }
+
+    data->offset = -(soma_p0 / 100);
+}
+
+void process_pressures(data_t *data)
+{
+    float v_0 = (data->adc * 0.1875) / 1000;
+
+    data->pressaoTotal = (((v_0 / 5) - 0.04) / 0.018);
+
+    data->pressao = data->pressaoTotal + data->offset;
+}
+
 void task_data(void *pvargs)
 {
     ESP_LOGI(TAG_MIDDLEWARE, "data task started");
 
-    cmd_t cmd = {0};
+    int flagDuty = 0;
+    data_t data = {0};
 
     i2c_master_bus_config_t i2c_mst_config = {
         .clk_source = I2C_CLK_SRC_DEFAULT,
@@ -52,7 +86,17 @@ void task_data(void *pvargs)
 
     while (1)
     {
-        vTaskDelay(pdMS_TO_TICKS(10));
+        if (xQueueReceive(queue_bomba_to_data, &flagDuty, -1) == pdTRUE)
+            if (flagDuty >= 0)
+                data.duty = flagDuty;
+
+        ads111x_set_input_mux(ADS111X_MUX_0_GND, &ads);
+        ads111x_get_conversion_sigle_ended(&ads);
+        data.adc = ads.conversion;
+
+        process_pressures(&data);
+        
+        vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
 

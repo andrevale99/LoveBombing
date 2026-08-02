@@ -130,3 +130,20 @@ esp_err_t bomba_set_duty(const bomba_t *bomba, which_bomb_t select, int duty)
 
     return ret;
 }
+
+int bomba_get_actualduty(const bomba_t *bomba, which_bomb_t select)
+{
+    if (!bomba)
+        return ESP_ERR_NOT_FOUND;
+
+    if (select < BOMB_1 || select > BOMB_2)
+        return ESP_ERR_NOT_FOUND;
+
+    if (select == BOMB_1)
+        return ledc_get_duty(LEDC_HIGH_SPEED_MODE, bomba->channel_gpiobomb1);
+
+    else
+        return ledc_get_duty(LEDC_HIGH_SPEED_MODE, bomba->channel_gpiobomb2);
+
+    return -1;
+}

@@ -84,4 +84,6 @@ esp_err_t bomba_deinit(const bomba_t *);
 
 esp_err_t bomba_set_duty(const bomba_t *bomba, which_bomb_t select, int duty);
 
+int bomba_get_actualduty(const bomba_t *bomba, which_bomb_t select);
+
 #endif
