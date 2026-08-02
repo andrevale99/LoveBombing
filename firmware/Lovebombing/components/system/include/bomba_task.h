@@ -10,15 +10,6 @@
 
 #include "cmd.h"
 
-
-#define Apulso 18.84928
-#define Bpulso 0.052304
-#define Cpulso 1.045616
-
-#define Avazao 4.265640
-#define Bvazao 0.719007
-#define Cvazao 0.254911
-
 static const char *TAG_BOMBA = "bomba_task";
 TaskHandle_t handleTask_bomba = NULL;
 

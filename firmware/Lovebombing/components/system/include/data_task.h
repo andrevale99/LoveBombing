@@ -12,6 +12,16 @@
 #include "cmd.h"
 #include "ads111x.h"
 
+#define Apwm 18.84928
+#define Bpwm 0.052304
+#define Cpwm 1.045616
+
+#define Avazao 4.265640
+#define Bvazao 0.719007
+#define Cvazao 0.254911
+
+#define DUTY_TO_PERCENT(_duty) ((float)_duty / 256.f * 100.f)
+
 static const char *TAG_DATA = "data_task";
 TaskHandle_t handleTask_data = NULL;
 
@@ -80,7 +90,7 @@ void task_data(void *pvargs)
     else
         ESP_LOGI(TAG_DATA, "ADS111X encontrado");
 
-    ads111x_set_data_rate(ADS111X_DATA_RATE_475, &ads);
+    ads111x_set_data_rate(ADS111X_DATA_RATE_860, &ads);
     ads111x_set_gain(ADS111X_GAIN_4V096, &ads);
     ads111x_set_mode(ADS111X_MODE_SINGLE_SHOT, &ads);
 
@@ -92,8 +102,11 @@ void task_data(void *pvargs)
             if (flagDuty >= 0)
                 data.duty = flagDuty;
 
-        float pulso_ms = Apulso * expf(-Bpulso * data.duty) + Cpulso;
+        float pulso_ms = Apwm * expf(-Bpwm * DUTY_TO_PERCENT(data.duty)) + Cpwm;
         data.vazao = Avazao * exp(-Bvazao * pulso_ms) + Cvazao;
+
+        if (DUTY_TO_PERCENT(data.duty) < 28 )
+            data.vazao = 0;
 
         ads111x_set_input_mux(ADS111X_MUX_0_GND, &ads);
         ads111x_get_conversion_sigle_ended(&ads);
